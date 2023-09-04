@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,32 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group([
+    'prefix' => 'v1'
+], function(){
+    Route::group([
+        'prefix' => 'admin'
+    ], function(){
+        Route::post('login', [AdminController::class, 'login']);
+        Route::get('logout', [AdminController::class, 'logout']);
+
+        Route::group([
+            'middleware' => 'auth:api'
+        ], function(){
+            Route::get('user-listing',[AdminController::class, 'userIndex']);
+
+        });
+    });
+
+    Route::group([
+        'prefix' => 'user'
+    ], function(){
+        Route::post('login', [UserController::class, 'login']);
+        Route::get('logout', [UserController::class, 'logout']);
+        Route::group([
+            'middleware' => 'auth:api'
+        ], function () {
+            Route::get('/', [UserController::class, 'show']);
+        });
+    });
 });

@@ -40,6 +40,9 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver' => 'jwt'
+        ],
     ],
 
     /*
@@ -111,5 +114,10 @@ return [
     */
 
     'password_timeout' => 10800,
+
+    'jwt' => [
+        'public_key_path' => env('JWT_PUBLIC_KEY_PATH'),
+        'private_key_path' => env('JWT_PRIVATE_KEY_PATH'),
+    ]
 
 ];
