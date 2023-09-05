@@ -14,6 +14,7 @@ use Lcobucci\JWT\Encoding\ChainedFormatter;
 use App\Interfaces\Repository\UserRepositoryInterface;
 use App\Models\JwtToken;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Lcobucci\JWT\Token\Parser;
@@ -72,6 +73,10 @@ class UserRepository implements UserRepositoryInterface
             'token_title' => "Token authentication"
         ]);
 
+        $this->updateUser(Auth::user(), [
+            'last_login_at' => Carbon::now()
+        ]);
+
         $result = [
             'body' => [
                 'success' => 1,
@@ -87,7 +92,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function getAllUsers(Request $request): array
     {
-        $users = User::query();
+        $users = User::whereIsAdmin(0);
 
         if($request->get('email')){
             $users->where('email','LIKE', "%" . $request->get('email') .  "%");
@@ -109,7 +114,17 @@ class UserRepository implements UserRepositoryInterface
         return User::where('uuid',$uuid)->first();
     }
 
-    private function validateRole(User $user, $admin = true)
+    public function updateUser(User $user, array $data): User
+    {
+        $updatedData = [];
+        if(isset($data['last_login_at'])){
+            $updatedData['last_login_at'] = $data['last_login_at'];
+        }
+        $user->update($updatedData);
+        return $user;
+    }
+
+    private function validateAdminRole(User $user)
     {
         return $user->is_admin;
     }

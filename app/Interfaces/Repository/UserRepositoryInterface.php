@@ -14,4 +14,6 @@ interface UserRepositoryInterface
     public function getAllUsers(Request $request): array;
 
     public function getUserByUuid(string $uuid): ?User;
+
+    public function updateUser(User $user, array $data): User;
 }
