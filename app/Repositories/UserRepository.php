@@ -98,15 +98,13 @@ class UserRepository implements UserRepositoryInterface
             $users->where('email','LIKE', "%" . $request->get('email') .  "%");
         }
 
-        $result = [
+        return [
             'body' => [
                 'success' => 1,
                 'data' => $users->paginate($request->limit ?? 10)
             ],
             'code' => Response::HTTP_OK,
         ];
-
-        return $result;
     }
 
     public function getUserByUuid(string $uuid): ?User

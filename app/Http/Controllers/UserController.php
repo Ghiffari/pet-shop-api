@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Order\ListOrderRequest;
 use App\Repositories\UserRepository;
 use App\Http\Requests\User\LoginRequest;
+use App\Repositories\OrderRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     public function __construct(
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
+        private readonly OrderRepository $orderRepository,
     ) {
     }
 
@@ -31,5 +33,11 @@ class UserController extends Controller
             ],
             'code' => Response::HTTP_OK,
         ]);
+    }
+
+    public function orders(ListOrderRequest $request)
+    {
+        $res = $this->orderRepository->getOrderDataByUserId($request, Auth::id());
+        return response()->json($res['body'], $res['code']);
     }
 }

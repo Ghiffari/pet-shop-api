@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,9 +29,24 @@ Route::group([
         Route::group([
             'middleware' => 'auth:api'
         ], function(){
-            Route::get('user-listing',[AdminController::class, 'userIndex']);
+            Route::get('user-listing',[AdminController::class, 'userListing']);
 
         });
+    });
+
+    Route::group([
+        'prefix' => 'order',
+        'middleware' => 'auth:api'
+    ], function(){
+        Route::post('create', [OrderController::class, 'create']);
+        Route::get('{uuid}', [OrderController::class, 'show']);
+    });
+
+    Route::group([
+        'prefix' => 'orders',
+        'middleware' => ['auth:api','admin']
+    ], function(){
+        Route::get('/', [OrderController::class , 'index']);
     });
 
     Route::group([
@@ -42,6 +58,7 @@ Route::group([
             'middleware' => 'auth:api'
         ], function () {
             Route::get('/', [UserController::class, 'show']);
+            Route::get('orders', [UserController::class , 'orders']);
         });
     });
 });

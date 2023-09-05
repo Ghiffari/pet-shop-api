@@ -4,7 +4,6 @@ namespace App\Interfaces\Repository;
 
 use App\Http\Requests\User\LoginRequest;
 use App\Models\User;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 
 interface UserRepositoryInterface

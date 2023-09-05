@@ -22,7 +22,7 @@ class AdminController extends Controller
         return response()->json($res['body'], $res['code']);
     }
 
-    public function userIndex(Request $request)
+    public function userListing(Request $request)
     {
         $res = $this->userRepository->getAllUsers($request);
         return response()->json($res['body'], $res['code']);
