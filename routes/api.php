@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +42,8 @@ Route::group([
     ], function(){
         Route::post('create', [OrderController::class, 'create']);
         Route::get('{uuid}', [OrderController::class, 'show']);
+        Route::put('{uuid}', [OrderController::class, 'update'])->middleware('admin');
+        Route::delete('{uuid}', [OrderController::class, 'destroy'])->middleware('admin');
     });
 
     Route::group([
@@ -60,5 +64,14 @@ Route::group([
             Route::get('/', [UserController::class, 'show']);
             Route::get('orders', [UserController::class , 'orders']);
         });
+    });
+
+    Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('products', [ProductController::class, 'index']);
+
+    Route::group([
+        'prefix' => 'product'
+    ], function(){
+        Route::post('create', [ProductController::class, 'create'])->middleware('admin');
     });
 });
