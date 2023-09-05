@@ -1,0 +1,27 @@
+{
+    "name": "ghiffariaq/stripe",
+    "description": "External Package for Level 4 Test",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ghiffari Assamar Qandi",
+            "email": "travish90@gmail.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ghiffariaq\\Stripe\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ghiffariaq\\Stripe\\StripeServiceProvider"
+            ]
+        }
+    }
+}

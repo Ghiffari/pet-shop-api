@@ -7,6 +7,7 @@ use App\Http\Requests\Order\ListOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Repositories\OrderRepository;
 use App\Services\OrderService;
+use Ghiffariaq\Stripe\Services\StripeService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -28,7 +29,9 @@ class OrderController extends Controller
     {
         try {
             $res = $service->createOrderData($request);
-            return response()->json($res['body'], $res['code']);
+            $stripe = new StripeService();
+            $url = $stripe->generateCheckoutUrl($res['body']['data']);
+            return $this->apiResponse(1, $url);
         } catch (\Throwable $th) {
 
             return response()->json([

@@ -53,7 +53,10 @@ class OrderService implements OrderServiceInterface
             return [
                 'body' => [
                     'success' => 1,
-                    'data' => $order
+                    'data' => [
+                        'order' => $order,
+                        'products' => $this->getStripeProductData($request->products)
+                    ]
                 ],
                 'code' => Response::HTTP_OK,
             ];
@@ -76,6 +79,20 @@ class OrderService implements OrderServiceInterface
         }
 
         return $amount;
+    }
+
+    private function getStripeProductData(array $products): array
+    {
+        $stripeProducts = [];
+        foreach ($products as $product) {
+            $res = $this->productRepository->getProductByUuid($product['product']);
+            $stripeProducts[] = [
+                'title' => $res->title,
+                'price' => $res->price,
+                'quantity' => $product['quantity'],
+            ];
+        }
+        return $stripeProducts;
     }
 
 }
