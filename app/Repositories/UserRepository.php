@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Requests\Admin\ListUserRequest;
 use DateTimeImmutable;
 use Illuminate\Http\Response;
 use Lcobucci\JWT\Token\Builder;
@@ -18,10 +19,12 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Lcobucci\JWT\Token\Parser;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function login(LoginRequest $request, bool $admin = false): array
+    public function login(LoginRequest $request, bool $admin = false): string
     {
         $result = [];
 
@@ -29,26 +32,10 @@ class UserRepository implements UserRepositoryInterface
             'email' => $request->get('email'),
             'password' => $request->get('password')
         ])) {
-            return [
-                'body' => [
-                    'success' => 0,
-                    'data' => [
-                        'token' => null
-                    ]
-                ],
-                'code' => Response::HTTP_UNAUTHORIZED,
-            ];
+            throw new UnauthorizedHttpException("Error Processing Request");
         }
         if($admin && !$this->validateAdminRole(Auth::user())){
-            return [
-                'body' => [
-                    'success' => 0,
-                    'data' => [
-                        'token' => null
-                    ]
-                ],
-                'code' => Response::HTTP_FORBIDDEN,
-            ];
+            throw new AccessDeniedHttpException("Error Processing Request");
         }
 
         $tokenBuilder = (new Builder(new JoseEncoder(), ChainedFormatter::default()));
@@ -77,20 +64,10 @@ class UserRepository implements UserRepositoryInterface
             'last_login_at' => Carbon::now()
         ]);
 
-        $result = [
-            'body' => [
-                'success' => 1,
-                'data' => [
-                    'token' => $token->toString()
-                ]
-            ],
-            'code' => Response::HTTP_OK,
-        ];
-
-        return $result;
+        return $token->toString();
     }
 
-    public function getAllUsers(Request $request): array
+    public function getAllUsers(ListUserRequest $request): LengthAwarePaginator
     {
         $users = User::whereIsAdmin(0);
 
@@ -98,13 +75,7 @@ class UserRepository implements UserRepositoryInterface
             $users->where('email','LIKE', "%" . $request->get('email') .  "%");
         }
 
-        return [
-            'body' => [
-                'success' => 1,
-                'data' => $users->paginate($request->limit ?? 10)
-            ],
-            'code' => Response::HTTP_OK,
-        ];
+        return $users->paginate($request->limit ?? 10);
     }
 
     public function getUserByUuid(string $uuid): ?User

@@ -7,6 +7,7 @@ use App\Http\Requests\Order\ListOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Repositories\OrderRepository;
 use App\Services\OrderService;
+use Illuminate\Database\SQLiteDatabaseDoesNotExistException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,8 +21,11 @@ class OrderController extends Controller
 
     public function index(ListOrderRequest $request)
     {
-        $res = $this->orderRepository->getAllOrders($request);
-        return response()->json($res['body'], $res['code']);
+        try {
+            return $this->apiResponse(1,$this->orderRepository->getAllOrders($request));
+        } catch (\Throwable $th) {
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+        }
     }
 
     public function create(CreateOrderRequest $request, OrderService $service)
@@ -29,12 +33,7 @@ class OrderController extends Controller
         try {
             return $this->apiResponse(1, $service->createOrderData($request));
         } catch (\Throwable $th) {
-            return response()->json([
-                'success' => 0,
-                'data' => [
-                    'message' => $th->__toString()
-                ]
-            ], $th->getCode() > 0 ? $th->getCode() : Response::HTTP_BAD_REQUEST);
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 
@@ -43,12 +42,7 @@ class OrderController extends Controller
         try {
             return $this->apiResponse(1, $service->updateOrderData($request, $this->orderRepository->getOrderDataByUuid($uuid)));
         } catch (\Throwable $th) {
-            return response()->json([
-                'success' => 0,
-                'data' => [
-                    'message' => $th->__toString()
-                ]
-            ], $th->getCode() > 0 ? $th->getCode() : Response::HTTP_BAD_REQUEST);
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 }

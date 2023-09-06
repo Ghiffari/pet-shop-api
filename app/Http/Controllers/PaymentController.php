@@ -18,7 +18,11 @@ class PaymentController extends Controller
 
     public function index(ListPaymentRequest $request)
     {
-        return $this->apiResponse(1, $this->paymentRepository->getAllPayments($request));
+        try {
+            return $this->apiResponse(1, $this->paymentRepository->getAllPayments($request));
+        } catch (\Throwable $th) {
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+        }
     }
 
     public function create(CreatePaymentRequest $request)
@@ -26,7 +30,7 @@ class PaymentController extends Controller
         try {
             return $this->apiResponse(1, $this->paymentRepository->createPayment($request));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), $th->getCode() > 0 ? $th->get_code : Response::HTTP_BAD_REQUEST);
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 }

@@ -20,24 +20,28 @@ class UserController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $res = $this->userRepository->login($request);
-        return response()->json($res['body'], $res['code']);
+        try {
+            return $this->apiResponse(1, $this->userRepository->login($request));
+        } catch (\Throwable $th) {
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+        }
     }
 
     public function show()
     {
-        return response()->json([
-            'body' => [
-                'success' => 1,
-                'data' => Auth::guard('api')->user()
-            ],
-            'code' => Response::HTTP_OK,
-        ]);
+        try {
+            return $this->apiResponse(1, Auth::guard('api')->user());
+        } catch (\Throwable $th) {
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+        }
     }
 
     public function orders(ListOrderRequest $request)
     {
-        $res = $this->orderRepository->getOrderDataByUserId($request, Auth::id());
-        return response()->json($res['body'], $res['code']);
+        try {
+            return $this->apiResponse(1, $this->orderRepository->getOrderDataByUserId($request, Auth::id()));
+        } catch (\Throwable $th) {
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+        }
     }
 }

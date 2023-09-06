@@ -20,7 +20,11 @@ class ProductController extends Controller
 
     public function index(ListProductRequest $request)
     {
-        return $this->apiResponse(1, $this->productRepository->getAllProducts($request));
+        try {
+            return $this->apiResponse(1, $this->productRepository->getAllProducts($request));
+        } catch (\Throwable $th) {
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+        }
     }
 
     public function store(CreateProductRequest $request)
@@ -28,7 +32,7 @@ class ProductController extends Controller
         try {
             return $this->apiResponse(1, $this->productRepository->createProduct($request));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), $th->getCode() > 0 ? $th->get_code : Response::HTTP_BAD_REQUEST);
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 }

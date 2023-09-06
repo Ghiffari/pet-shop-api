@@ -18,6 +18,10 @@ class OrderStatusController extends Controller
 
     public function index(ListOrderStatusRequest $request)
     {
-        return $this->apiResponse(1, $this->orderStatusRepository->getAllOrderStatuses($request));
+        try {
+            return $this->apiResponse(1, $this->orderStatusRepository->getAllOrderStatuses($request));
+        } catch (\Throwable $th) {
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+        }
     }
 }

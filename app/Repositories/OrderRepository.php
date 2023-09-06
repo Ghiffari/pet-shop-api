@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Order\ListOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Interfaces\Repository\OrderRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class OrderRepository implements OrderRepositoryInterface
 {
 
-    public function getAllOrders(ListOrderRequest $request): array
+    public function getAllOrders(ListOrderRequest $request): LengthAwarePaginator
     {
         // default orders by last 30 days
         $orders = Order::when($request->get('date_range'), function (Builder $query) use ($request) {
@@ -23,13 +24,7 @@ class OrderRepository implements OrderRepositoryInterface
             $query->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
         });
 
-        return [
-            'body' => [
-                'success' => 1,
-                'data' => $orders->paginate($request->get('limit') ?? 10)
-            ],
-            'code' => Response::HTTP_OK,
-        ];
+        return $orders->paginate($request->get('limit') ?? 10);
     }
 
     public function getOrderDataByUserId(ListOrderRequest $request, int $id): array

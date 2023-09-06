@@ -17,6 +17,11 @@ class CategoryController extends Controller
 
     public function index(ListCategoryRequest $request)
     {
-        return $this->apiResponse(1, $this->categoryRepository->getAllCategories($request));
+        try {
+            //code...
+            return $this->apiResponse(1, $this->categoryRepository->getAllCategories($request));
+        } catch (\Throwable $th) {
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+        }
     }
 }
