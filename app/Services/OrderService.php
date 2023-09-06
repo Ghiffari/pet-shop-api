@@ -15,12 +15,15 @@ use App\Repositories\OrderStatusRepository;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Interfaces\Service\OrderServiceInterface;
+use App\Util\OrderHelper;
 use Ghiffariaq\Stripe\Services\StripeService;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class OrderService implements OrderServiceInterface
 {
+
+    use OrderHelper;
 
     private OrderRepository $orderRepository;
     private ProductRepository $productRepository;
@@ -103,19 +106,19 @@ class OrderService implements OrderServiceInterface
         }
     }
 
-    private function calculateOrderAmount(array $products): float
-    {
-        $amount = floatval(0);
+    // public function calculateOrderAmount(array $products): float
+    // {
+    //     $amount = floatval(0);
 
-        foreach($products as $product){
-            $res = $this->productRepository->getProductByUuid($product['product']);
-            if($res){
-                $amount += ($res->price * $product['quantity']);
-            }
-        }
+    //     foreach($products as $product){
+    //         $res = $this->productRepository->getProductByUuid($product['product']);
+    //         if($res){
+    //             $amount += ($res->price * $product['quantity']);
+    //         }
+    //     }
 
-        return $amount;
-    }
+    //     return $amount;
+    // }
 
     private function getStripeProductData(array $products): array
     {
