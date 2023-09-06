@@ -15,15 +15,19 @@ use Lcobucci\JWT\Encoding\ChainedFormatter;
 use App\Interfaces\Repository\UserRepositoryInterface;
 use App\Models\JwtToken;
 use App\Models\User;
+use App\Util\JwtHelper;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Lcobucci\JWT\Token\Parser;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class UserRepository implements UserRepositoryInterface
 {
+
+    use JwtHelper;
+
     public function login(LoginRequest $request, bool $admin = false): string
     {
         $result = [];
@@ -65,6 +69,24 @@ class UserRepository implements UserRepositoryInterface
         ]);
 
         return $token->toString();
+    }
+
+    public function logout(?string $token): bool
+    {
+        if(!$token){
+            throw new UnauthorizedHttpException("Token not found");
+        }
+
+        if ($parsedToken = $this->parseToken($token)) {
+            $uniqueId = $parsedToken->claims()->get('jti');
+            if($jwtToken = $this->getJwtTokenByUniqueId($uniqueId)){
+                $jwtToken->delete();
+                return true;
+            }
+        }
+
+        throw new BadRequestHttpException("Error Processing Request");
+
     }
 
     public function getAllUsers(ListUserRequest $request): LengthAwarePaginator

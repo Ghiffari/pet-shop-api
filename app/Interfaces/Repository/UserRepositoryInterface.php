@@ -11,6 +11,8 @@ interface UserRepositoryInterface
 {
     public function login(LoginRequest $request, bool $admin = false): string;
 
+    public function logout(?string $token): bool;
+
     public function getAllUsers(ListUserRequest $request): LengthAwarePaginator;
 
     public function getUserByUuid(string $uuid): ?User;

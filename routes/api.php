@@ -28,7 +28,7 @@ Route::group([
         'prefix' => 'admin'
     ], function(){
         Route::post('login', [AdminController::class, 'login']);
-        Route::get('logout', [AdminController::class, 'logout']);
+        Route::get('logout', [AdminController::class, 'logout'])->middleware('auth:api');
 
         Route::group([
             'middleware' => 'auth:api'
@@ -59,7 +59,7 @@ Route::group([
         'prefix' => 'user'
     ], function(){
         Route::post('login', [UserController::class, 'login']);
-        Route::get('logout', [UserController::class, 'logout']);
+        Route::get('logout', [UserController::class, 'logout'])->middleware('auth:api');
         Route::group([
             'middleware' => 'auth:api'
         ], function () {

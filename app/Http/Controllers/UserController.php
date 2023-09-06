@@ -7,6 +7,7 @@ use App\Http\Requests\Order\ListOrderRequest;
 use App\Repositories\UserRepository;
 use App\Http\Requests\User\LoginRequest;
 use App\Repositories\OrderRepository;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,6 +23,15 @@ class UserController extends Controller
     {
         try {
             return $this->apiResponse(1, $this->userRepository->login($request));
+        } catch (\Throwable $th) {
+            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            return $this->apiResponse(1, $this->userRepository->logout($request->bearerToken()));
         } catch (\Throwable $th) {
             return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
