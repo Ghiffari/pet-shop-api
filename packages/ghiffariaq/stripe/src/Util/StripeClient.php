@@ -11,10 +11,13 @@ trait StripeClient
     {
         $client = new Client();
         try {
-            $response = $client->request($method, $url, [
-                'auth' => [config('stripe.secret'), ''],
-                'form_params' => $options
-            ]);
+            $body = [
+                'auth' => [config('stripe.secret'), '']
+            ];
+            if($method === "POST"){
+                $body['form_params'] = $options;
+            }
+            $response = $client->request($method, $url, $body);
             return json_decode($response->getBody()->getContents());
         } catch (\Throwable $th) {
             throw $th;
@@ -32,6 +35,11 @@ trait StripeClient
             'customer_email' => $data['order']->user->email
         ];
         return $this->apiRequest($this->getBaseApiUrl() . "/checkout/sessions", "POST", $options);
+    }
+
+    public function retrieveCheckout(string $id)
+    {
+        return $this->apiRequest($this->getBaseApiUrl() . "/checkout/sessions/$id", "GET");
     }
 
     public function createStripePrice($data)

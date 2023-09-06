@@ -30,7 +30,7 @@ class OrderController extends Controller
         try {
             $res = $service->createOrderData($request);
             $stripe = new StripeService();
-            $url = $stripe->generateCheckoutUrl($res['body']['data']);
+            $url = $stripe->generateCheckoutData($res['body']['data'])->url;
             return $this->apiResponse(1, $url);
         } catch (\Throwable $th) {
 

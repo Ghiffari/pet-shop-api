@@ -7,6 +7,10 @@
     <title>Stripe Callback</title>
 </head>
 <body>
+    @if(Session::has('error'))
+        Callback page triggered. However issue encountered : {{Session::get('error')}}
+    @endif
     <p>Your Payment Status: {{\Str::upper(request()->get('status'))}}</p>
+
 </body>
 </html>
