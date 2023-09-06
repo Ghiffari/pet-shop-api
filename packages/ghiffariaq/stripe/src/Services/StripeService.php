@@ -29,7 +29,7 @@ class StripeService implements StripeServiceInterface
     {
         $orderRepository = new OrderRepository();
         $order = $orderRepository->getOrderDataByUuid($uuid);
-        if ($order && $order->payment && $order->payment->type === OrderConstant::PAYMENT_CREDIT_CARD) {
+        if ($order && $order->payment && $order->payment->type === OrderConstant::PAYMENT_STRIPE) {
             try {
                 $stripeCheckout = $this->retrieveCheckout($order->payment->details['checkout_session_id']);
                 $detail = $order->payment->details;

@@ -7,9 +7,8 @@ use App\Http\Requests\Order\ListOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Repositories\OrderRepository;
 use App\Services\OrderService;
-use Ghiffariaq\Stripe\Services\StripeService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -28,12 +27,8 @@ class OrderController extends Controller
     public function create(CreateOrderRequest $request, OrderService $service)
     {
         try {
-            $res = $service->createOrderData($request);
-            $stripe = new StripeService();
-            $url = $stripe->generateCheckoutData($res['body']['data'])->url;
-            return $this->apiResponse(1, $url);
+            return $this->apiResponse(1, $service->createOrderData($request));
         } catch (\Throwable $th) {
-
             return response()->json([
                 'success' => 0,
                 'data' => [
@@ -43,11 +38,10 @@ class OrderController extends Controller
         }
     }
 
-    public function update(UpdateOrderRequest $request, string $uuid)
+    public function update(UpdateOrderRequest $request, string $uuid, OrderService $service)
     {
         try {
-            $res = $this->orderRepository->updateOrder($request, $this->orderRepository->getOrderDataByUuid($uuid));
-            return response()->json($res['body'], $res['code']);
+            return $this->apiResponse(1, $service->updateOrderData($request, $this->orderRepository->getOrderDataByUuid($uuid)));
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => 0,

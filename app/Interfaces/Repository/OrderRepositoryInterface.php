@@ -2,12 +2,8 @@
 
 namespace App\Interfaces\Repository;
 
-use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\ListOrderRequest;
-use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Models\Order;
-use App\Models\OrderStatus;
-use App\Models\Payment;
 
 interface OrderRepositoryInterface
 {
@@ -19,5 +15,5 @@ interface OrderRepositoryInterface
 
     public function createOrder(array $data): Order;
 
-    public function updateOrder(UpdateOrderRequest $request, Order $order): Order;
+    public function updateOrder(array $data, Order $order): Order;
 }

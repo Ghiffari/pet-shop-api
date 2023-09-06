@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Order;
+namespace App\Http\Requests\Payment;
 
+use App\Constants\OrderConstant;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
-class UpdateOrderRequest extends FormRequest
+class CreatePaymentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +25,8 @@ class UpdateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_status_uuid' => 'exists:order_statuses,uuid',
-            'payment_uuid' => 'exists:payments,uuid'
+            'type' => ['required', 'string', Rule::in(OrderConstant::LIST_OF_PAYMENTS)],
+            'details' => 'array'
         ];
     }
 }

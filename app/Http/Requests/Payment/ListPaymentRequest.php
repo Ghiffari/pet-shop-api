@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Order;
+namespace App\Http\Requests\Payment;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class UpdateOrderRequest extends FormRequest
+class ListPaymentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,8 @@ class UpdateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_status_uuid' => 'exists:order_statuses,uuid',
-            'payment_uuid' => 'exists:payments,uuid'
+            'page' => 'integer|min:0',
+            'limit' => 'integer|min:1',
         ];
     }
 }

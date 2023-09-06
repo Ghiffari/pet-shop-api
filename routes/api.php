@@ -3,6 +3,8 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderStatusController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -42,7 +44,7 @@ Route::group([
     ], function(){
         Route::post('create', [OrderController::class, 'create']);
         Route::get('{uuid}', [OrderController::class, 'show']);
-        Route::put('{uuid}', [OrderController::class, 'update'])->middleware('admin');
+        Route::put('{uuid}', [OrderController::class, 'update']);
         Route::delete('{uuid}', [OrderController::class, 'destroy'])->middleware('admin');
     });
 
@@ -66,12 +68,21 @@ Route::group([
         });
     });
 
-    Route::get('categories', [CategoryController::class, 'index']);
-    Route::get('products', [ProductController::class, 'index']);
-
     Route::group([
         'prefix' => 'product'
     ], function(){
         Route::post('create', [ProductController::class, 'create'])->middleware('admin');
     });
+
+    Route::group([
+        'prefix' => 'payment',
+        'middleware' => 'auth:api'
+    ], function(){
+        Route::post('create', [PaymentController::class, 'create']);
+    });
+
+    Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('order-statuses', [OrderStatusController::class, 'index']);
+    Route::get('products', [ProductController::class, 'index']);
+
 });

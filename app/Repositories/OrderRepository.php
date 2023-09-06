@@ -54,20 +54,9 @@ class OrderRepository implements OrderRepositoryInterface
         return Order::create($data);
     }
 
-    public function updateOrder(UpdateOrderRequest $request, Order $order): Order
+    public function updateOrder(array $data, Order $order): Order
     {
-
-        try {
-            DB::beginTransaction();
-            $order->update([
-                'order_status_id' => $request->get('order_status_id') ?? $order->order_status_id,
-            ]);
-            DB::commit();
-            return $order;
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
-
+        $order->update($data);
+        return $order;
     }
 }

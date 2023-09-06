@@ -64,6 +64,10 @@ class Order extends Model
         'shipped_at' => 'datetime',
     ];
 
+    protected $hidden = [
+        'id'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

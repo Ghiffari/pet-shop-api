@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Order;
+namespace App\Http\Requests\OrderStatus;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
-class UpdateOrderRequest extends FormRequest
+class ListOrderStatusRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Auth::check();
+        return true;
     }
 
     /**
@@ -23,8 +22,9 @@ class UpdateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_status_uuid' => 'exists:order_statuses,uuid',
-            'payment_uuid' => 'exists:payments,uuid'
+            'date_range' => 'array',
+            'page' => 'integer|min:0',
+            'limit' => 'integer|min:1',
         ];
     }
 }
