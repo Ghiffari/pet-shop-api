@@ -106,20 +106,6 @@ class OrderService implements OrderServiceInterface
         }
     }
 
-    // public function calculateOrderAmount(array $products): float
-    // {
-    //     $amount = floatval(0);
-
-    //     foreach($products as $product){
-    //         $res = $this->productRepository->getProductByUuid($product['product']);
-    //         if($res){
-    //             $amount += ($res->price * $product['quantity']);
-    //         }
-    //     }
-
-    //     return $amount;
-    // }
-
     private function getStripeProductData(array $products): array
     {
         $stripeProducts = [];
