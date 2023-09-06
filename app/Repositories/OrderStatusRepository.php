@@ -11,7 +11,11 @@ class OrderStatusRepository implements OrderStatusRepositoryInterface
 {
     public function getAllOrderStatuses(ListOrderStatusRequest $request): LengthAwarePaginator
     {
-        return OrderStatus::paginate($request->get('limit') ?? 10);
+        $status = OrderStatus::query();
+        if ($request->sortBy) {
+            $status->orderBy($request->sortBy, $request->desc ? "desc" : "asc");
+        }
+        return $status->paginate($request->get('limit') ?? 10);
     }
 
     public function getOrderStatusByTitle(string $title): ?OrderStatus

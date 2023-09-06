@@ -24,19 +24,22 @@ class OrderRepository implements OrderRepositoryInterface
             $query->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
         });
 
+        if ($request->get('sortBy')) {
+            $orders->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
+        }
+
         return $orders->paginate($request->get('limit') ?? 10);
     }
 
-    public function getOrderDataByUserId(ListOrderRequest $request, int $id): array
+    public function getOrderDataByUserId(ListOrderRequest $request, int $id): LengthAwarePaginator
     {
         $orders = Order::where('user_id', $id);
-        return [
-            'body' => [
-                'success' => 1,
-                'data' => $orders->paginate($request->get('limit') ?? 10)
-            ],
-            'code' => Response::HTTP_OK,
-        ];
+
+        if ($request->get('sortBy')) {
+            $orders->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
+        }
+
+        return $orders->paginate($request->get('limit') ?? 10);
     }
 
     public function getOrderDataByUuid(string $uuid): ?Order

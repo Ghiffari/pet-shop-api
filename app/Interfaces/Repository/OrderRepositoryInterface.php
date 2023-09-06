@@ -10,7 +10,7 @@ interface OrderRepositoryInterface
 {
     public function getAllOrders(ListOrderRequest $request): LengthAwarePaginator;
 
-    public function getOrderDataByUserId(ListOrderRequest $request, int $id): array;
+    public function getOrderDataByUserId(ListOrderRequest $request, int $id): LengthAwarePaginator;
 
     public function getOrderDataByUuid(string $uuid): ?Order;
 

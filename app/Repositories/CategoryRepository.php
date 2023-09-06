@@ -11,6 +11,10 @@ class CategoryRepository implements CategoryRepositoryInterface
 {
     public function getAllCategories(ListCategoryRequest $request): LengthAwarePaginator
     {
-        return Category::paginate($request->get('limit') ?? 10);
+        $category = Category::query();
+        if ($request->sortBy) {
+            $category->orderBy($request->sortBy, $request->desc ? "desc" : "asc");
+        }
+        return $category->paginate($request->get('limit') ?? 10);
     }
 }

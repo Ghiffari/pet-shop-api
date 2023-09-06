@@ -17,8 +17,11 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function getAllProducts(ListProductRequest $request): LengthAwarePaginator
     {
-        return Product::with('category')
-                        ->paginate($request->get('limit') ?? 10);
+        $products = Product::with('category');
+        if ($request->get('sortBy')) {
+            $products->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
+        }
+        return $products->paginate($request->get('limit') ?? 10);
     }
 
     public function createProduct(CreateProductRequest $request): Product

@@ -75,6 +75,10 @@ class UserRepository implements UserRepositoryInterface
             $users->where('email','LIKE', "%" . $request->get('email') .  "%");
         }
 
+        if ($request->get('sortBy')) {
+            $users->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
+        }
+
         return $users->paginate($request->limit ?? 10);
     }
 

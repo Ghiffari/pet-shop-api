@@ -14,7 +14,11 @@ class PaymentRepository implements PaymentRepositoryInterface
 
     public function getAllPayments(ListPaymentRequest $request): LengthAwarePaginator
     {
-        return Payment::paginate($request->get('limit') ?? 10);
+        $payment = Payment::query();
+        if ($request->sortBy) {
+            $payment->orderBy($request->sortBy, $request->desc ? "desc" : "asc");
+        }
+        return $payment->paginate($request->get('limit') ?? 10);
     }
 
     public function getPaymentByUuid(string $uuid): ?Payment
