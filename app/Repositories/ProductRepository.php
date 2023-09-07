@@ -10,17 +10,16 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ProductRepository implements ProductRepositoryInterface
 {
-    public function getProductByUuid(string $uuid): Product
+    public function getProductByUuid(string $uuid): ?Product
     {
         return Product::where('uuid', $uuid)->first();
     }
 
     public function getAllProducts(ListProductRequest $request): LengthAwarePaginator
     {
-        $products = Product::with('category');
-        if ($request->get('sortBy')) {
-            $products->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
-        }
+        $products = Product::with('category')->when($request->get('sortBy'), function (Builder $query) use ($request): void {
+            $query->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
+        });
         return $products->paginate($request->get('limit') ?? 10);
     }
 

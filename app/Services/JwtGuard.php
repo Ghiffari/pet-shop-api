@@ -23,9 +23,6 @@ class JwtGuard implements Guard
 
     public function user()
     {
-        if (!is_null($this->user)) {
-            return $this->user;
-        }
         if (request()->bearerToken()) {
             $parsedToken = $this->jwtService->parseToken(request()->bearerToken());
             if ($parsedToken && !$parsedToken->isExpired(new DateTimeImmutable()) && $this->jwtService->getJwtTokenByUniqueId($parsedToken->claims()->get('jti'))) {

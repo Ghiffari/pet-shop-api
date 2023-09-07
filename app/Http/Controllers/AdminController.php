@@ -25,19 +25,11 @@ class AdminController extends Controller
 
     public function logout(Request $request)
     {
-        try {
-            return $this->apiResponse(1, $this->userRepository->logout($request->bearerToken()));
-        } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
-        }
+        return $this->apiResponse(1, $this->userRepository->logout($request->bearerToken()));
     }
 
     public function userListing(ListUserRequest $request)
     {
-        try {
-            return $this->apiResponse(1, $this->userRepository->getAllUsers($request));
-        } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
-        }
+        return $this->apiResponse(1, $this->userRepository->getAllUsers($request));
     }
 }

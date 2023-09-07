@@ -9,7 +9,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface ProductRepositoryInterface
 {
-    public function getProductByUuid(string $uuid): Product;
+    public function getProductByUuid(string $uuid): ?Product;
 
     public function getAllProducts(ListProductRequest $request): LengthAwarePaginator;
 

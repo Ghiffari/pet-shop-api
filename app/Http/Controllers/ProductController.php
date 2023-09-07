@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\ProductRepository;
 use App\Http\Requests\Product\ListProductRequest;
 use App\Http\Requests\Product\CreateProductRequest;
+use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
@@ -13,16 +14,12 @@ class ProductController extends Controller
     ) {
     }
 
-    public function index(ListProductRequest $request)
+    public function index(ListProductRequest $request): JsonResponse
     {
-        try {
-            return $this->apiResponse(1, $this->productRepository->getAllProducts($request));
-        } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
-        }
+        return $this->apiResponse(1, $this->productRepository->getAllProducts($request));
     }
 
-    public function create(CreateProductRequest $request)
+    public function create(CreateProductRequest $request): JsonResponse
     {
         try {
             return $this->apiResponse(1, $this->productRepository->createProduct($request));

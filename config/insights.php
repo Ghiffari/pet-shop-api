@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use SlevomatCodingStandard\Sniffs\Classes\SuperfluousInterfaceNamingSniff;
+
 return [
 
     /*
@@ -24,7 +26,9 @@ return [
     'ide' => 'phpstorm',
 
     'exclude' => [
-        'app/Providers'
+        'app/Providers',
+        'app/Exceptions',
+        'app/Http/Kernel.php'
     ],
 
     'add' => [],
@@ -41,6 +45,7 @@ return [
 
         // Architecture
         \NunoMaduro\PhpInsights\Domain\Insights\ForbiddenNormalClasses::class,            //Normal classes are forbidden
+        SuperfluousInterfaceNamingSniff::class,
 
         // Style
         \PHP_CodeSniffer\Standards\Generic\Sniffs\Formatting\SpaceAfterCastSniff::class,  // Space after cast

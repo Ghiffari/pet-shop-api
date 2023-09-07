@@ -8,15 +8,15 @@ use App\Http\Requests\Payment\ListPaymentRequest;
 use App\Http\Requests\Payment\CreatePaymentRequest;
 use App\Interfaces\Repository\PaymentRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
 class PaymentRepository implements PaymentRepositoryInterface
 {
     public function getAllPayments(ListPaymentRequest $request): LengthAwarePaginator
     {
-        $payment = Payment::query();
-        if ($request->sortBy) {
-            $payment->orderBy($request->sortBy, $request->desc ? "desc" : "asc");
-        }
+        $payment = Payment::when($request->get('sortBy'), function (Builder $query) use ($request): void {
+            $query->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
+        });
         return $payment->paginate($request->get('limit') ?? 10);
     }
 

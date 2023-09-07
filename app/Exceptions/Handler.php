@@ -12,7 +12,7 @@ class Handler extends ExceptionHandler
      *
      * @var array<int, string>
      */
-    protected array $dontFlash = [
+    protected $dontFlash = [
         'current_password',
         'password',
         'password_confirmation',
@@ -23,7 +23,7 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e): void {
+        $this->reportable(function (Throwable $e){
             //
         });
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Repositories\OrderStatusRepository;
 use App\Http\Requests\OrderStatus\ListOrderStatusRequest;
+use Illuminate\Http\JsonResponse;
 
 class OrderStatusController extends Controller
 {
@@ -12,12 +13,8 @@ class OrderStatusController extends Controller
     ) {
     }
 
-    public function index(ListOrderStatusRequest $request)
+    public function index(ListOrderStatusRequest $request): JsonResponse
     {
-        try {
-            return $this->apiResponse(1, $this->orderStatusRepository->getAllOrderStatuses($request));
-        } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
-        }
+        return $this->apiResponse(1, $this->orderStatusRepository->getAllOrderStatuses($request));
     }
 }

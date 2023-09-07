@@ -25,26 +25,22 @@ class StripeService implements StripeServiceInterface
 
     public function callbackHandler($order): void
     {
-        if ($order->payment && $order->payment->type === OrderConstant::PAYMENT_STRIPE) {
-            try {
-                $stripeCheckout = $this->retrieveCheckout($order->payment->details['checkout_session_id']);
-                $detail = $order->payment->details;
-                $detail['log'] = [
-                    'checkout' => $stripeCheckout,
-                ];
-                $order->payment()->update([
-                    'details' => $detail,
+        if ($order->payment->type === OrderConstant::PAYMENT_STRIPE) {
+            $stripeCheckout = $this->retrieveCheckout($order->payment->details['checkout_session_id']);
+            $detail = $order->payment->details;
+            $detail['log'] = [
+                'checkout' => $stripeCheckout,
+            ];
+            $order->payment()->update([
+                'details' => $detail,
+            ]);
+            if ($stripeCheckout->payment_status === 'paid') {
+                $orderStatusRepository = new OrderStatusRepository();
+                $order->update([
+                    'order_status_id' => $orderStatusRepository->getOrderStatusByTitle(OrderConstant::STATUS_PAID)->id,
                 ]);
-                if ($stripeCheckout->payment_status === 'paid') {
-                    $orderStatusRepository = new OrderStatusRepository();
-                    $order->update([
-                        'order_status_id' => $orderStatusRepository->getOrderStatusByTitle(OrderConstant::STATUS_PAID)->id,
-                    ]);
 
-                    return;
-                }
-            } catch (\Throwable $th) {
-                throw $th;
+                return;
             }
         }
     }

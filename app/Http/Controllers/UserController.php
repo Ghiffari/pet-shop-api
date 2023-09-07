@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\OrderRepository;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\Order\ListOrderRequest;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
@@ -17,7 +18,7 @@ class UserController extends Controller
     ) {
     }
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
         try {
             return $this->apiResponse(1, $this->userRepository->login($request));
@@ -26,30 +27,18 @@ class UserController extends Controller
         }
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
-        try {
-            return $this->apiResponse(1, $this->userRepository->logout($request->bearerToken()));
-        } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
-        }
+        return $this->apiResponse(1, $this->userRepository->logout($request->bearerToken()));
     }
 
-    public function show()
+    public function show(): JsonResponse
     {
-        try {
-            return $this->apiResponse(1, Auth::guard('api')->user());
-        } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
-        }
+        return $this->apiResponse(1, Auth::guard('api')->user());
     }
 
-    public function orders(ListOrderRequest $request)
+    public function orders(ListOrderRequest $request): JsonResponse
     {
-        try {
-            return $this->apiResponse(1, $this->orderRepository->getOrderDataByUserId($request, Auth::id()));
-        } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
-        }
+        return $this->apiResponse(1, $this->orderRepository->getOrderDataByUserId($request, Auth::id()));
     }
 }

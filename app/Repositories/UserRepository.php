@@ -17,8 +17,6 @@ class UserRepository implements UserRepositoryInterface
 {
     public function login(LoginRequest $request, bool $admin = false): string
     {
-        $result = [];
-
         if (!Auth::attempt([
             'email' => $request->get('email'),
             'password' => $request->get('password'),
@@ -31,7 +29,7 @@ class UserRepository implements UserRepositoryInterface
         $service = new JwtService();
         $token = $service->generateToken(Auth::user());
 
-        $this->updateUser(Auth::user(), [
+        Auth::user()->update([
             'last_login_at' => Carbon::now(),
         ]);
 
@@ -50,31 +48,18 @@ class UserRepository implements UserRepositoryInterface
     public function getAllUsers(ListUserRequest $request): LengthAwarePaginator
     {
         $users = User::whereIsAdmin(0);
-
+        $users->when($request->get('sortBy'), function (Builder $query) use ($request): void {
+            $query->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
+        });
         if ($request->get('email')) {
             $users->where('email', 'LIKE', "%" . $request->get('email') .  "%");
         }
-
-        if ($request->get('sortBy')) {
-            $users->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
-        }
-
         return $users->paginate($request->limit ?? 10);
     }
 
     public function getUserByUuid(string $uuid): ?User
     {
         return User::where('uuid', $uuid)->first();
-    }
-
-    public function updateUser(User $user, array $data): User
-    {
-        $updatedData = [];
-        if (isset($data['last_login_at'])) {
-            $updatedData['last_login_at'] = $data['last_login_at'];
-        }
-        $user->update($updatedData);
-        return $user;
     }
 
     private function validateAdminRole(User $user)

@@ -4,17 +4,17 @@ namespace App\Repositories;
 
 use App\Models\OrderStatus;
 use App\Http\Requests\OrderStatus\ListOrderStatusRequest;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Interfaces\Repository\OrderStatusRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
 class OrderStatusRepository implements OrderStatusRepositoryInterface
 {
     public function getAllOrderStatuses(ListOrderStatusRequest $request): LengthAwarePaginator
     {
-        $status = OrderStatus::query();
-        if ($request->sortBy) {
-            $status->orderBy($request->sortBy, $request->desc ? "desc" : "asc");
-        }
+        $status = OrderStatus::when($request->get('sortBy'), function (Builder $query) use ($request): void {
+            $query->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
+        });
         return $status->paginate($request->get('limit') ?? 10);
     }
 

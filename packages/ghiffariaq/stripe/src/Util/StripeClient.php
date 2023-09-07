@@ -9,18 +9,14 @@ trait StripeClient
     public function apiRequest($url, $method, $options = []): mixed
     {
         $client = new Client();
-        try {
-            $body = [
-                'auth' => [config('stripe.secret'), ''],
-            ];
-            if ($method === "POST") {
-                $body['form_params'] = $options;
-            }
-            $response = $client->request($method, $url, $body);
-            return json_decode($response->getBody()->getContents());
-        } catch (\Throwable $th) {
-            throw $th;
+        $body = [
+            'auth' => [config('stripe.secret'), ''],
+        ];
+        if ($method === "POST") {
+            $body['form_params'] = $options;
         }
+        $response = $client->request($method, $url, $body);
+        return json_decode($response->getBody()->getContents());
     }
 
     public function createCheckout($data): mixed

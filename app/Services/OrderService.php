@@ -39,28 +39,21 @@ class OrderService implements OrderServiceInterface
      */
     public function createOrderData(CreateOrderRequest $request): array
     {
-        try {
-            DB::beginTransaction();
-            $amount = $this->calculateOrderAmount($request->get('products'));
-            $status = $this->orderStatusRepository->getOrderStatusByTitle(OrderConstant::STATUS_OPEN);
-            $data = [
-                'user_id' => Auth::id(),
-                'order_status_id' => $status->id,
-                'uuid' => Str::uuid(),
-                'products' => $request->get('products'),
-                'address' => $request->get('address'),
-                'amount' => $amount,
-                'delivery_fee' => $amount > 500 ? 15 : 0,
-            ];
-            $order = $this->orderRepository->createOrder($data);
-            DB::commit();
-            return [
-                'order' => $order,
-            ];
-        } catch (Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
+        $amount = $this->calculateOrderAmount($request->get('products'));
+        $status = $this->orderStatusRepository->getOrderStatusByTitle(OrderConstant::STATUS_OPEN);
+        $data = [
+            'user_id' => Auth::id(),
+            'order_status_id' => $status->id,
+            'uuid' => Str::uuid(),
+            'products' => $request->get('products'),
+            'address' => $request->get('address'),
+            'amount' => $amount,
+            'delivery_fee' => $amount > 500 ? 15 : 0,
+        ];
+        $order = $this->orderRepository->createOrder($data);
+        return [
+            'order' => $order,
+        ];
     }
 
     /**
@@ -68,42 +61,31 @@ class OrderService implements OrderServiceInterface
      */
     public function updateOrderData(UpdateOrderRequest $request, Order $order): array
     {
-        try {
-            DB::beginTransaction();
-            $updatedAttribute = [];
-            if ($request->get('order_status_uuid')) {
-                $status = $this->orderStatusRepository->getOrderStatusByUuid($request->get('order_status_uuid'));
-                if (!Auth::user()->is_admin && !in_array($status, OrderConstant::LIST_OF_USER_STATUS_UPDATE)) {
-                    throw new BadRequestHttpException("User only able to update " . OrderConstant::STATUS_OPEN . " and " . OrderConstant::STATUS_PENDING_PAYMENT);
-                }
-                $updatedAttribute['order_status_id'] = $status->id;
-            }
-
-            if ($request->get('payment_uuid')) {
-                $payment = $this->paymentRepository->getPaymentByUuid($request->get('payment_uuid'));
-                $this->orderRepository->updateOrder([
-                    'payment_id' => $payment->id,
-                ], $order);
-                $status = $this->orderStatusRepository->getOrderStatusByTitle(OrderConstant::STATUS_PENDING_PAYMENT);
-                $updatedAttribute['order_status_id'] = $status->id;
-                if ($payment->type === OrderConstant::PAYMENT_STRIPE) {
-                    $stripeService = new StripeService();
-                    $checkout = $stripeService->generateCheckoutData([
-                        'order' => $order,
-                        'products' => $this->getStripeProductData($order->products),
-                    ]);
-                    $response['url'] = $checkout->url;
-                }
-            }
-
-            $order = $this->orderRepository->updateOrder($updatedAttribute, $order);
-            DB::commit();
-            $response['order'] = $order;
-            return $response;
-        } catch (Throwable $th) {
-            DB::rollBack();
-            throw $th;
+        $updatedAttribute = [];
+        $payment = null;
+        if ($request->get('order_status_uuid')) {
+            $status = $this->orderStatusRepository->getOrderStatusByUuid($request->get('order_status_uuid'));
+            $updatedAttribute['order_status_id'] = $status->id;
         }
+
+        if ($request->get('payment_uuid')) {
+            $payment = $this->paymentRepository->getPaymentByUuid($request->get('payment_uuid'));
+            $updatedAttribute['payment_id'] = $payment->id;
+            $status = $this->orderStatusRepository->getOrderStatusByTitle(OrderConstant::STATUS_PENDING_PAYMENT);
+            $updatedAttribute['order_status_id'] = $status->id;
+        }
+        $order = $this->orderRepository->updateOrder($updatedAttribute, $order);
+
+        if ($payment && $payment->type === OrderConstant::PAYMENT_STRIPE) {
+            $stripeService = new StripeService();
+            $checkout = $stripeService->generateCheckoutData([
+                'order' => $order,
+                'products' => $this->getStripeProductData($order->products),
+            ]);
+            $response['url'] = $checkout->url;
+        }
+        $response['order'] = $order;
+        return $response;
     }
     /**
      * @param array<array> $products
@@ -131,7 +113,6 @@ class OrderService implements OrderServiceInterface
             $res = $productRepository->getProductByUuid($product['product']);
             $amount += $res->price * $product['quantity'];
         }
-
         return $amount;
     }
 }

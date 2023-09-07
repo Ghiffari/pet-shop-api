@@ -16,6 +16,4 @@ interface UserRepositoryInterface
     public function getAllUsers(ListUserRequest $request): LengthAwarePaginator;
 
     public function getUserByUuid(string $uuid): ?User;
-
-    public function updateUser(User $user, array $data): User;
 }

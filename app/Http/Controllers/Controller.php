@@ -6,13 +6,14 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests;
     use ValidatesRequests;
 
-    public function apiResponse(bool $status, mixed $data, $code = 200)
+    public function apiResponse(int $status, mixed $data, $code = 200): JsonResponse
     {
         return response()->json([
             'success' => $status ? 1 : 0,

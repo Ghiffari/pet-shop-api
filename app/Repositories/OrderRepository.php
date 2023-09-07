@@ -29,11 +29,10 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function getOrderDataByUserId(ListOrderRequest $request, int $id): LengthAwarePaginator
     {
-        $orders = Order::where('user_id', $id);
-
-        if ($request->get('sortBy')) {
-            $orders->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
-        }
+        $orders = Order::where('user_id', $id)
+            ->when($request->get('sortBy'), function (Builder $query) use ($request): void {
+                $query->orderBy($request->get('sortBy'), $request->get('desc') ? "desc" : "asc");
+            });
 
         return $orders->paginate($request->get('limit') ?? 10);
     }
