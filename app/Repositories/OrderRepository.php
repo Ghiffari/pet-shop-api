@@ -4,23 +4,19 @@ namespace App\Repositories;
 
 use Carbon\Carbon;
 use App\Models\Order;
-use Illuminate\Http\Response;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Order\ListOrderRequest;
-use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Interfaces\Repository\OrderRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
 
 class OrderRepository implements OrderRepositoryInterface
 {
-
     public function getAllOrders(ListOrderRequest $request): LengthAwarePaginator
     {
         // default orders by last 30 days
-        $orders = Order::when($request->get('date_range'), function (Builder $query) use ($request) {
+        $orders = Order::when($request->get('date_range'), function (Builder $query) use ($request): void {
             $query->whereBetween('created_at', [Carbon::parse($request->get('date_range')['start_date']), Carbon::parse($request->get('date_range')['end_date'])]);
-        }, function (Builder $query) {
+        }, function (Builder $query): void {
             $query->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
         });
 

@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class CategorySeeder extends Seeder
 {
@@ -24,7 +23,7 @@ class CategorySeeder extends Seeder
             'Other'
         ];
 
-        foreach($categories as $category){
+        foreach($categories as $category) {
             Category::create([
                 'uuid' => Str::uuid(),
                 'title' => $category,

@@ -2,16 +2,15 @@
 
 namespace App\Repositories;
 
-use App\Http\Requests\Payment\CreatePaymentRequest;
-use App\Http\Requests\Payment\ListPaymentRequest;
 use App\Models\Payment;
 use Illuminate\Support\Str;
+use App\Http\Requests\Payment\ListPaymentRequest;
+use App\Http\Requests\Payment\CreatePaymentRequest;
 use App\Interfaces\Repository\PaymentRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PaymentRepository implements PaymentRepositoryInterface
 {
-
     public function getAllPayments(ListPaymentRequest $request): LengthAwarePaginator
     {
         $payment = Payment::query();
@@ -31,7 +30,7 @@ class PaymentRepository implements PaymentRepositoryInterface
         return Payment::create([
             'uuid' => Str::uuid(),
             'type' => $request->type,
-            'details' => $request->details
+            'details' => $request->details,
         ]);
     }
 }

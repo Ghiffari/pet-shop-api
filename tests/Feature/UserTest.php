@@ -3,16 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Util\JwtHelper;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Services\JwtService;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    use JwtHelper;
-
     public function test_post_login(): void
     {
         $user = User::factory()->create([
@@ -49,7 +45,8 @@ class UserTest extends TestCase
     public function test_get_logout(): void
     {
         $user = User::factory()->create();
-        $this->withToken($this->generateToken($user)->toString())
+        $service = new JwtService();
+        $this->withToken($service->generateToken($user)->toString())
             ->json('GET', '/api/v1/user/logout')
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -66,7 +63,8 @@ class UserTest extends TestCase
     public function test_get_all_orders_by_user(): void
     {
         $user = User::factory()->create();
-        $this->withToken($this->generateToken($user)->toString())
+        $service = new JwtService();
+        $this->withToken($service->generateToken($user)->toString())
             ->json('GET', '/api/v1/user/orders')
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -80,7 +78,8 @@ class UserTest extends TestCase
     public function test_get_user_data(): void
     {
         $user = User::factory()->create();
-        $this->withToken($this->generateToken($user)->toString())
+        $service = new JwtService();
+        $this->withToken($service->generateToken($user)->toString())
             ->json('GET', '/api/v1/user')
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([

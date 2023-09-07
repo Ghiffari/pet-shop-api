@@ -2,9 +2,9 @@
 
 namespace App\Interfaces\Repository;
 
-use App\Http\Requests\Product\CreateProductRequest;
-use App\Http\Requests\Product\ListProductRequest;
 use App\Models\Product;
+use App\Http\Requests\Product\ListProductRequest;
+use App\Http\Requests\Product\CreateProductRequest;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface ProductRepositoryInterface

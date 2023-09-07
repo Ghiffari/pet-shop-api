@@ -10,7 +10,6 @@ use App\Models\OrderStatus;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\OrderService;
-use App\Util\OrderHelper;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,9 +18,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class OrderFactory extends Factory
 {
-
-    use OrderHelper;
-
     /**
      * Define the model's default state.
      *
@@ -30,7 +26,8 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         $products = $this->generateProductdata(rand(2, 10));
-        $amount = $this->calculateOrderAmount($products);
+        $service = new OrderService();
+        $amount = $service->calculateOrderAmount($products);
         return [
             "address" => [
                 "shipping" => $this->generateAddressData(),
@@ -48,10 +45,10 @@ class OrderFactory extends Factory
     private function generateProductData(int $num)
     {
         $products = [];
-        for ($i=0; $i < $num ; $i++) {
+        for ($i = 0; $i < $num ; $i++) {
             $products[] = [
                 'product' => Product::inRandomOrder()->first()->uuid,
-                'quantity' => rand(1,10)
+                'quantity' => rand(1, 10)
             ];
         }
 
@@ -72,13 +69,13 @@ class OrderFactory extends Factory
 
     public function configure(): static
     {
-        return $this->afterCreating(function (Order $order){
-            if(in_array($order->status->title, [OrderConstant::STATUS_PAID, OrderConstant::STATUS_SHIPPED])){
+        return $this->afterCreating(function (Order $order) {
+            if(in_array($order->status->title, [OrderConstant::STATUS_PAID, OrderConstant::STATUS_SHIPPED])) {
                 $payment = Payment::create($this->generatePaymentData());
                 $order->update([
                     'payment_id' => $payment->id
                 ]);
-                if($order->status->title === OrderConstant::STATUS_SHIPPED){
+                if($order->status->title === OrderConstant::STATUS_SHIPPED) {
                     $order->update([
                         'shipped_at' => Carbon::now()
                     ]);
@@ -90,7 +87,7 @@ class OrderFactory extends Factory
     private function generatePaymentData()
     {
         $payments = OrderConstant::LIST_OF_PAYMENTS;
-        $type = $payments[rand(0,2)];
+        $type = $payments[rand(0, 2)];
         switch ($type) {
             case OrderConstant::PAYMENT_CREDIT_CARD:
                 $details = [

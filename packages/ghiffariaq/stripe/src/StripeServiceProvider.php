@@ -8,10 +8,8 @@ class StripeServiceProvider extends ServiceProvider
 {
     /**
      * Perform post-registration booting of services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
@@ -23,21 +21,16 @@ class StripeServiceProvider extends ServiceProvider
 
     /**
      * Register any package services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/stripe.php', 'stripe');
-
     }
 
     /**
      * Console-specific booting.
-     *
-     * @return void
      */
-    protected function bootForConsole()
+    protected function bootForConsole(): void
     {
         // Publishing the configuration file.
         $this->publishes([

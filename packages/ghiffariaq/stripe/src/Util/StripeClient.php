@@ -6,15 +6,14 @@ use GuzzleHttp\Client;
 
 trait StripeClient
 {
-
     public function apiRequest($url, $method, $options = []): mixed
     {
         $client = new Client();
         try {
             $body = [
-                'auth' => [config('stripe.secret'), '']
+                'auth' => [config('stripe.secret'), ''],
             ];
-            if($method === "POST"){
+            if ($method === "POST") {
                 $body['form_params'] = $options;
             }
             $response = $client->request($method, $url, $body);
@@ -22,7 +21,6 @@ trait StripeClient
         } catch (\Throwable $th) {
             throw $th;
         }
-
     }
 
     public function createCheckout($data): mixed
@@ -32,14 +30,14 @@ trait StripeClient
             'success_url' => route('stripe.callback', $data['order']['uuid']) . "?gtw=stripe&status=success",
             'cancel_url' => route('stripe.callback', $data['order']['uuid']) . "?gtw=stripe&status=failure",
             'line_items' => $this->generateStripePrice($data['products']),
-            'customer_email' => $data['order']->user->email
+            'customer_email' => $data['order']->user->email,
         ];
         return $this->apiRequest($this->getBaseApiUrl() . "/checkout/sessions", "POST", $options);
     }
 
     public function retrieveCheckout(string $id): mixed
     {
-        return $this->apiRequest($this->getBaseApiUrl() . "/checkout/sessions/$id", "GET");
+        return $this->apiRequest($this->getBaseApiUrl() . "/checkout/sessions/{$id}", "GET");
     }
 
     public function createStripePrice($data): mixed
@@ -48,8 +46,8 @@ trait StripeClient
             'unit_amount' => $data['price'] * 100,
             'currency' => config('stripe.currency'),
             'product_data' => [
-                'name' => $data['title']
-            ]
+                'name' => $data['title'],
+            ],
         ];
         return $this->apiRequest($this->getBaseApiUrl() . "/prices", "POST", $options);
     }
@@ -57,11 +55,11 @@ trait StripeClient
     private function generateStripePrice($products): array
     {
         $stripeProducts = [];
-        foreach($products as $product){
+        foreach ($products as $product) {
             $price = $this->createStripePrice($product);
             $stripeProducts[] = [
                 'price' => $price->id,
-                'quantity' => $product['quantity']
+                'quantity' => $product['quantity'],
             ];
         }
 

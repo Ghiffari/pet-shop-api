@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Order\ListOrderRequest;
-use App\Repositories\UserRepository;
-use App\Http\Requests\User\LoginRequest;
-use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\OrderRepository;
+use App\Http\Requests\User\LoginRequest;
+use App\Http\Requests\Order\ListOrderRequest;
 
 class UserController extends Controller
 {

@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Payment\CreatePaymentRequest;
-use App\Http\Requests\Payment\ListPaymentRequest;
 use App\Repositories\PaymentRepository;
+use App\Http\Requests\Payment\ListPaymentRequest;
+use App\Http\Requests\Payment\CreatePaymentRequest;
 
 class PaymentController extends Controller
 {
-
     public function __construct(
         private readonly PaymentRepository $paymentRepository
-    )
-    {
-
+    ) {
     }
 
     public function index(ListPaymentRequest $request)

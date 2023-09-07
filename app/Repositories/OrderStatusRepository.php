@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Http\Requests\OrderStatus\ListOrderStatusRequest;
-use App\Interfaces\Repository\OrderStatusRepositoryInterface;
 use App\Models\OrderStatus;
+use App\Http\Requests\OrderStatus\ListOrderStatusRequest;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Interfaces\Repository\OrderStatusRepositoryInterface;
 
 class OrderStatusRepository implements OrderStatusRepositoryInterface
 {
@@ -27,5 +27,4 @@ class OrderStatusRepository implements OrderStatusRepositoryInterface
     {
         return OrderStatus::whereUuid($uuid)->first();
     }
-
 }

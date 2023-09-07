@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * App\Models\Order
@@ -55,7 +55,7 @@ class Order extends Model
         'address',
         'delivery_fee',
         'amount',
-        'shipped_at'
+        'shipped_at',
     ];
 
     protected $casts = [
@@ -65,7 +65,7 @@ class Order extends Model
     ];
 
     protected $hidden = [
-        'id'
+        'id',
     ];
 
     public function user(): BelongsTo

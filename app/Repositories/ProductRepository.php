@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Http\Requests\Product\CreateProductRequest;
 use App\Models\Product;
 use App\Http\Requests\Product\ListProductRequest;
+use App\Http\Requests\Product\CreateProductRequest;
 use App\Interfaces\Repository\ProductRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -12,7 +12,7 @@ class ProductRepository implements ProductRepositoryInterface
 {
     public function getProductByUuid(string $uuid): Product
     {
-        return Product::where('uuid',$uuid)->first();
+        return Product::where('uuid', $uuid)->first();
     }
 
     public function getAllProducts(ListProductRequest $request): LengthAwarePaginator
@@ -30,7 +30,7 @@ class ProductRepository implements ProductRepositoryInterface
             'category' => $request->get('category_uuid'),
             'title' => $request->get('title'),
             'price' => $request->get('price'),
-            'metadata' => []
+            'metadata' => [],
         ]);
     }
 }

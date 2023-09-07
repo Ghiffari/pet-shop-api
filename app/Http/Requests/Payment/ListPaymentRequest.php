@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Payment;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Http\FormRequest;
 
 class ListPaymentRequest extends FormRequest
 {

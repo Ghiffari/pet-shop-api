@@ -37,10 +37,8 @@ class CreateOrderRequest extends FormRequest
             'address.billing.last_name' => 'required|string|max:255',
             'address.billing.line1' => 'required|string|max:255',
             'address.billing.line2' => 'required|string|max:255',
-            'address.billing.city' => 'string|max:255',
-            'address.billing.state' => 'string|max:255',
             'address.billing.zip_code' => 'required|string|max:255',
-            'address.billing.country' => 'required|string|max:255'
+            'address.billing.country' => 'required|string|max:255',
         ];
     }
 }

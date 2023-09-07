@@ -2,8 +2,8 @@
 
 namespace App\Interfaces\Repository;
 
-use App\Http\Requests\Order\ListOrderRequest;
 use App\Models\Order;
+use App\Http\Requests\Order\ListOrderRequest;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface OrderRepositoryInterface

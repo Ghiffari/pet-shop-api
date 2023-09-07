@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\Payment;
 
-use App\Constants\OrderConstant;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use App\Constants\OrderConstant;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Http\FormRequest;
 
 class CreatePaymentRequest extends FormRequest
 {
@@ -26,7 +26,7 @@ class CreatePaymentRequest extends FormRequest
     {
         return [
             'type' => ['required', 'string', Rule::in(OrderConstant::LIST_OF_PAYMENTS)],
-            'details' => 'array'
+            'details' => 'array',
         ];
     }
 }

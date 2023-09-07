@@ -21,9 +21,9 @@ class ProductFactory extends Factory
         return [
             'category_uuid' => $this->generateRandomCategory(),
             'uuid' => Str::uuid(),
-            'title' => fake()->words(rand(3,5), true),
-            'price' => fake()->randomFloat(2,10,500),
-            'description' => fake()->text(rand(100,500)),
+            'title' => fake()->words(rand(3, 5), true),
+            'price' => fake()->randomFloat(2, 10, 500),
+            'description' => fake()->text(rand(100, 500)),
             'metadata' => []
         ];
     }

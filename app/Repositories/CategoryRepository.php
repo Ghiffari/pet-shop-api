@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Http\Requests\Category\ListCategoryRequest;
-use App\Interfaces\Repository\CategoryRepositoryInterface;
 use App\Models\Category;
+use App\Http\Requests\Category\ListCategoryRequest;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Interfaces\Repository\CategoryRepositoryInterface;
 
 class CategoryRepository implements CategoryRepositoryInterface
 {

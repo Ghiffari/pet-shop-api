@@ -1,6 +1,6 @@
 <?php
 
-use Ghiffariaq\Stripe\Controllers\StripeController;
 use Illuminate\Support\Facades\Route;
+use Ghiffariaq\Stripe\Controllers\StripeController;
 
-Route::get('payment/{uuid}',[StripeController::class , 'callback'])->name('stripe.callback');
+Route::get('payment/{uuid}', [StripeController::class, 'callback'])->name('stripe.callback');

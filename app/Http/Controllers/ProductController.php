@@ -2,20 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Product\CreateProductRequest;
-use App\Http\Requests\Product\ListProductRequest;
 use App\Repositories\ProductRepository;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Http\Requests\Product\ListProductRequest;
+use App\Http\Requests\Product\CreateProductRequest;
 
 class ProductController extends Controller
 {
-
     public function __construct(
         private readonly ProductRepository $productRepository
-    )
-    {
-
+    ) {
     }
 
     public function index(ListProductRequest $request)

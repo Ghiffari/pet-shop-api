@@ -17,4 +17,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::view('api/swagger','docs');
+Route::view('api/swagger', 'docs');

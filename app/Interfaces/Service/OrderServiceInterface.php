@@ -2,9 +2,9 @@
 
 namespace App\Interfaces\Service;
 
+use App\Models\Order;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
-use App\Models\Order;
 
 interface OrderServiceInterface
 {

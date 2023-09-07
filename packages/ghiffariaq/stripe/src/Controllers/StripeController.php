@@ -2,15 +2,14 @@
 
 namespace Ghiffariaq\Stripe\Controllers;
 
-use App\Repositories\OrderRepository;
-use Ghiffariaq\Stripe\Services\StripeService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use App\Repositories\OrderRepository;
 use Illuminate\Support\Facades\Session;
+use Ghiffariaq\Stripe\Services\StripeService;
 
 class StripeController extends Controller
 {
-
     public function __construct(
         private readonly OrderRepository $orderRepository
     ) {

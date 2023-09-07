@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * App\Models\Payment
@@ -32,10 +32,10 @@ class Payment extends Model
     protected $fillable = [
         'uuid',
         'type',
-        'details'
+        'details',
     ];
 
     protected $casts = [
-        'details' => 'array'
+        'details' => 'array',
     ];
 }

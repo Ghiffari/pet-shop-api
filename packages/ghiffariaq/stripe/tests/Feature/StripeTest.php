@@ -3,8 +3,6 @@
 namespace Ghiffariaq\Stripe\Tests\Feature;
 
 use App\Models\Order;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class StripeTest extends TestCase

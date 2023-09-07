@@ -2,25 +2,23 @@
 
 namespace App\Services;
 
-
+use DateTimeImmutable;
 use Illuminate\Auth\GuardHelpers;
 use App\Repositories\UserRepository;
-use App\Util\JwtHelper;
-use DateTimeImmutable;
 use Illuminate\Contracts\Auth\Guard;
-
 use Illuminate\Contracts\Auth\Authenticatable;
-
 
 class JwtGuard implements Guard
 {
-    use GuardHelpers, JwtHelper;
+    use GuardHelpers;
 
     private UserRepository $userRepository;
+    private JwtService $jwtService;
 
     public function __construct()
     {
         $this->userRepository = new UserRepository();
+        $this->jwtService = new JwtService();
     }
 
     public function user()
@@ -28,24 +26,19 @@ class JwtGuard implements Guard
         if (!is_null($this->user)) {
             return $this->user;
         }
-
-        if (!empty($token = request()->bearerToken())) {
-            if($parsedToken = $this->parseToken($token)){
-                if(!$parsedToken->isExpired(new DateTimeImmutable()) && $this->getJwtTokenByUniqueId($parsedToken->claims()->get('jti'))){
-                    if($user = $this->userRepository->getUserByUuid($parsedToken->claims()->get('user_uuid'))){
-                        return $this->setUser($user);
-                    };
-                }
-
+        if (request()->bearerToken()) {
+            $parsedToken = $this->jwtService->parseToken(request()->bearerToken());
+            if ($parsedToken && !$parsedToken->isExpired(new DateTimeImmutable()) && $this->jwtService->getJwtTokenByUniqueId($parsedToken->claims()->get('jti'))) {
+                $this->setUser($this->userRepository->getUserByUuid($parsedToken->claims()->get('user_uuid')));
+                return $this->user;
             }
         }
 
         return null;
     }
 
-    public function validate(array $credentials = [])
+    public function validate(array $credentials = []): void
     {
-
     }
 
     public function setUser(?Authenticatable $user)
@@ -53,6 +46,4 @@ class JwtGuard implements Guard
         $this->user = $user;
         return $this;
     }
-
-
 }
