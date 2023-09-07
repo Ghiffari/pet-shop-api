@@ -21,7 +21,7 @@ class CategoryController extends Controller
             //code...
             return $this->apiResponse(1, $this->categoryRepository->getAllCategories($request));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 }

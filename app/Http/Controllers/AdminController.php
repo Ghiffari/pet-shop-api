@@ -22,7 +22,7 @@ class AdminController extends Controller
         try {
             return $this->apiResponse(1, $this->userRepository->login($request, true));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 
@@ -31,7 +31,7 @@ class AdminController extends Controller
         try {
             return $this->apiResponse(1, $this->userRepository->getAllUsers($request));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 }

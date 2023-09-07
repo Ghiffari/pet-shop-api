@@ -21,7 +21,7 @@ class PaymentController extends Controller
         try {
             return $this->apiResponse(1, $this->paymentRepository->getAllPayments($request));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 
@@ -30,7 +30,7 @@ class PaymentController extends Controller
         try {
             return $this->apiResponse(1, $this->paymentRepository->createPayment($request));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 }

@@ -12,7 +12,7 @@ class ListUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::check() && Auth::user()->is_admin;
+        return Auth::check();
     }
 
     /**

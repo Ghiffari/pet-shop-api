@@ -3,22 +3,17 @@
 namespace App\Repositories;
 
 use App\Http\Requests\Admin\ListUserRequest;
-use DateTimeImmutable;
-use Illuminate\Http\Response;
-use Lcobucci\JWT\Token\Builder;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
+
 use Illuminate\Support\Facades\Auth;
-use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Encoding\JoseEncoder;
+
 use App\Http\Requests\User\LoginRequest;
-use Lcobucci\JWT\Encoding\ChainedFormatter;
+
 use App\Interfaces\Repository\UserRepositoryInterface;
 use App\Models\JwtToken;
 use App\Models\User;
 use App\Util\JwtHelper;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Lcobucci\JWT\Token\Parser;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -42,27 +37,7 @@ class UserRepository implements UserRepositoryInterface
             throw new AccessDeniedHttpException("Error Processing Request");
         }
 
-        $tokenBuilder = (new Builder(new JoseEncoder(), ChainedFormatter::default()));
-        $algorithm    = new Sha256();
-        $signingKey   = InMemory::file(config('auth.jwt.private_key_path'));
-
-        $now   = new DateTimeImmutable();
-        $uniqueId = uniqid();
-        $token = $tokenBuilder
-            ->issuedBy(config('app.url'))
-            ->permittedFor(config('app.url'))
-            ->identifiedBy($uniqueId)
-            ->issuedAt($now)
-            ->canOnlyBeUsedAfter($now)
-            ->expiresAt($now->modify('+2 hours'))
-            ->withClaim('user_uuid', Auth::user()->uuid)
-            ->getToken($algorithm, $signingKey);
-
-        JwtToken::create([
-            'user_id' => Auth::user()->id,
-            'unique_id' => $uniqueId,
-            'token_title' => "Token authentication"
-        ]);
+        $token = $this->generateToken(Auth::user());
 
         $this->updateUser(Auth::user(), [
             'last_login_at' => Carbon::now()

@@ -24,7 +24,7 @@ class UserController extends Controller
         try {
             return $this->apiResponse(1, $this->userRepository->login($request));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 
@@ -33,7 +33,7 @@ class UserController extends Controller
         try {
             return $this->apiResponse(1, $this->userRepository->logout($request->bearerToken()));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 
@@ -42,7 +42,7 @@ class UserController extends Controller
         try {
             return $this->apiResponse(1, Auth::guard('api')->user());
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 
@@ -51,7 +51,7 @@ class UserController extends Controller
         try {
             return $this->apiResponse(1, $this->orderRepository->getOrderDataByUserId($request, Auth::id()));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 }

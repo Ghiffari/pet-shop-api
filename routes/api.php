@@ -31,7 +31,7 @@ Route::group([
         Route::get('logout', [AdminController::class, 'logout'])->middleware('auth:api');
 
         Route::group([
-            'middleware' => 'auth:api'
+            'middleware' => ['auth:api', 'admin']
         ], function(){
             Route::get('user-listing',[AdminController::class, 'userListing']);
 

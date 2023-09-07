@@ -24,7 +24,7 @@ class OrderController extends Controller
         try {
             return $this->apiResponse(1,$this->orderRepository->getAllOrders($request));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 
@@ -33,7 +33,7 @@ class OrderController extends Controller
         try {
             return $this->apiResponse(1, $service->createOrderData($request));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 
@@ -42,7 +42,7 @@ class OrderController extends Controller
         try {
             return $this->apiResponse(1, $service->updateOrderData($request, $this->orderRepository->getOrderDataByUuid($uuid)));
         } catch (\Throwable $th) {
-            return $this->apiResponse(0, $th->__toString(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
+            return $this->apiResponse(0, $th->getMessage(), method_exists($th, 'getStatusCode') ? $th->getStatusCode() : $th->getCode());
         }
     }
 }

@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class AdminMiddleware
 {
@@ -21,7 +22,8 @@ class AdminMiddleware
         }
 
         return response()->json([
-            'message' => 'Forbidden Access'
-        ], Response::HTTP_FORBIDDEN);
+            'success' => 0,
+            'data' => "Forbidden Access"
+        ], 403);
     }
 }
