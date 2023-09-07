@@ -83,7 +83,9 @@ class OrderService implements OrderServiceInterface
 
             if($request->payment_uuid){
                 $payment = $this->paymentRepository->getPaymentByUuid($request->payment_uuid);
-                $updatedAttribute['payment_id'] = $payment->id;
+                $this->orderRepository->updateOrder([
+                    'payment_id' => $payment->id
+                ], $order);
                 $status = $this->orderStatusRepository->getOrderStatusByTitle(OrderConstant::STATUS_PENDING_PAYMENT);
                 $updatedAttribute['order_status_id'] = $status->id;
                 if ($payment->type === OrderConstant::PAYMENT_STRIPE) {
