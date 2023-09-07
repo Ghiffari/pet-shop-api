@@ -13,7 +13,7 @@ class StripeService implements StripeServiceInterface
 {
     use StripeClient;
 
-    public function generateCheckoutData($data)
+    public function generateCheckoutData($data): mixed
     {
         $checkout = $this->createCheckout($data);
         $order = $data['order'];
@@ -25,11 +25,10 @@ class StripeService implements StripeServiceInterface
         return $checkout;
     }
 
-    public function callbackHandler(string $uuid)
+    public function callbackHandler($order): void
     {
-        $orderRepository = new OrderRepository();
-        $order = $orderRepository->getOrderDataByUuid($uuid);
-        if ($order && $order->payment && $order->payment->type === OrderConstant::PAYMENT_STRIPE) {
+
+        if ($order->payment && $order->payment->type === OrderConstant::PAYMENT_STRIPE) {
             try {
                 $stripeCheckout = $this->retrieveCheckout($order->payment->details['checkout_session_id']);
                 $detail = $order->payment->details;

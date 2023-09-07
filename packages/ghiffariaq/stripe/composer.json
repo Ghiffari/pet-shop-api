@@ -14,7 +14,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Ghiffariaq\\Stripe\\": "src/"
+            "Ghiffariaq\\Stripe\\": "src/",
+            "Ghiffariaq\\Stripe\\Tests\\": "tests/"
         }
     },
     "extra": {

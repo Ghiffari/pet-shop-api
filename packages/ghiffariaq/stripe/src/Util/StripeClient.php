@@ -7,7 +7,7 @@ use GuzzleHttp\Client;
 trait StripeClient
 {
 
-    public function apiRequest($url, $method, $options = [])
+    public function apiRequest($url, $method, $options = []): mixed
     {
         $client = new Client();
         try {
@@ -25,7 +25,7 @@ trait StripeClient
 
     }
 
-    public function createCheckout($data)
+    public function createCheckout($data): mixed
     {
         $options = [
             'mode' => 'payment',
@@ -37,12 +37,12 @@ trait StripeClient
         return $this->apiRequest($this->getBaseApiUrl() . "/checkout/sessions", "POST", $options);
     }
 
-    public function retrieveCheckout(string $id)
+    public function retrieveCheckout(string $id): mixed
     {
         return $this->apiRequest($this->getBaseApiUrl() . "/checkout/sessions/$id", "GET");
     }
 
-    public function createStripePrice($data)
+    public function createStripePrice($data): mixed
     {
         $options = [
             'unit_amount' => $data['price'] * 100,
@@ -54,7 +54,7 @@ trait StripeClient
         return $this->apiRequest($this->getBaseApiUrl() . "/prices", "POST", $options);
     }
 
-    private function generateStripePrice($products)
+    private function generateStripePrice($products): array
     {
         $stripeProducts = [];
         foreach($products as $product){
@@ -68,7 +68,7 @@ trait StripeClient
         return $stripeProducts;
     }
 
-    private function getBaseApiUrl()
+    private function getBaseApiUrl(): string
     {
         return "https://api.stripe.com/v1";
     }
