@@ -15,7 +15,25 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class UserRepository implements UserRepositoryInterface
 {
+    private JwtService $jwtService;
+
+    public function __construct()
+    {
+        $this->jwtService = new JwtService();
+    }
+
     public function login(LoginRequest $request, bool $admin = false): string
+    {
+        $this->authenticate($request);
+        $this->validateRole(Auth::user(), $admin);
+        $token = $this->jwtService->generateToken(Auth::user());
+        Auth::user()->update([
+            'last_login_at' => Carbon::now(),
+        ]);
+        return $token->toString();
+    }
+
+    private function authenticate(LoginRequest $request): void
     {
         if (!Auth::attempt([
             'email' => $request->get('email'),
@@ -23,25 +41,13 @@ class UserRepository implements UserRepositoryInterface
         ])) {
             throw new UnauthorizedHttpException("Error Processing Request");
         }
-        if ($admin && !$this->validateAdminRole(Auth::user())) {
-            throw new AccessDeniedHttpException("Error Processing Request");
-        }
-        $service = new JwtService();
-        $token = $service->generateToken(Auth::user());
-
-        Auth::user()->update([
-            'last_login_at' => Carbon::now(),
-        ]);
-
-        return $token->toString();
     }
 
     public function logout(?string $token): void
     {
-        $service = new JwtService();
-        $parsedToken = $service->parseToken($token);
+        $parsedToken = $this->jwtService->parseToken($token);
         $uniqueId = $parsedToken->claims()->get('jti');
-        $jwtToken = $service->getJwtTokenByUniqueId($uniqueId);
+        $jwtToken = $this->jwtService->getJwtTokenByUniqueId($uniqueId);
         $jwtToken->delete();
     }
 
@@ -62,8 +68,10 @@ class UserRepository implements UserRepositoryInterface
         return User::where('uuid', $uuid)->first();
     }
 
-    private function validateAdminRole(User $user)
+    private function validateRole(User $user, bool $admin): void
     {
-        return $user->is_admin;
+        if ($admin && !$user->is_admin) {
+            throw new AccessDeniedHttpException("Error Processing Request");
+        }
     }
 }

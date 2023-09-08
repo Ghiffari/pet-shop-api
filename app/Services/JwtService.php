@@ -20,28 +20,41 @@ class JwtService
 {
     public function generateToken(User $user): Plain
     {
-        $tokenBuilder = (new Builder(new JoseEncoder(), ChainedFormatter::default()));
-        $algorithm = new Sha256();
-        $signingKey = InMemory::file(config('auth.jwt.private_key_path'));
-        $uniqueId = uniqid();
-        $now = new DateTimeImmutable();
-        $token = $tokenBuilder
-            ->issuedBy(config('app.url'))
-            ->permittedFor(config('app.url'))
-            ->identifiedBy($uniqueId)
-            ->issuedAt($now)
-            ->canOnlyBeUsedAfter($now)
-            ->expiresAt($now->modify('+2 hours'))
-            ->withClaim('user_uuid', $user->uuid)
-            ->getToken($algorithm, $signingKey);
+        $tokenBuilder = $this->createTokenBuilder();
+        $token = $this->buildToken($tokenBuilder, $user);
+        $this->saveTokenToDatabase($user, $token);
+        return $token;
+    }
 
+    private function createTokenBuilder(): Builder
+    {
+        return (new Builder(new JoseEncoder(), ChainedFormatter::default()))
+        ->issuedBy(config('app.url'))
+        ->permittedFor(config('app.url'))
+        ->identifiedBy(uniqid())
+        ->issuedAt(new DateTimeImmutable())
+        ->canOnlyBeUsedAfter(new DateTimeImmutable())
+        ->expiresAt((new DateTimeImmutable())->modify('+2 hours'));
+    }
+
+    private function saveTokenToDatabase(User $user, Plain $token): void
+    {
         JwtToken::create([
             'user_id' => $user->id,
-            'unique_id' => $uniqueId,
+            'unique_id' => $token->claims()->get('jti'),
             'token_title' => "Token authentication",
         ]);
+    }
 
-        return $token;
+
+    private function buildToken(Builder $tokenBuilder, User $user): Plain
+    {
+        $algorithm = new Sha256();
+        $signingKey = InMemory::file(config('auth.jwt.private_key_path'));
+
+        return $tokenBuilder
+            ->withClaim('user_uuid', $user->uuid)
+            ->getToken($algorithm, $signingKey);
     }
 
     public function parseToken(string $token): ?Plain

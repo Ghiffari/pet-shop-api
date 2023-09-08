@@ -9,22 +9,22 @@ trait StripeClient
     public function apiRequest($url, $method, $options = []): mixed
     {
         $client = new Client();
-        $body = [
-            'auth' => [config('stripe.secret'), ''],
-        ];
-        if ($method === "POST") {
-            $body['form_params'] = $options;
-        }
-        $response = $client->request($method, $url, $body);
-        return json_decode($response->getBody()->getContents());
+            $body = [
+                'auth' => [config('stripe.secret'), ''],
+            ];
+            if ($method === "POST") {
+                $body['form_params'] = $options;
+            }
+            $response = $client->request($method, $url, $body);
+            return json_decode($response->getBody()->getContents());
     }
 
     public function createCheckout($data): mixed
     {
         $options = [
             'mode' => 'payment',
-            'success_url' => route('stripe.callback', $data['order']['uuid']) . "?gtw=stripe&status=success",
-            'cancel_url' => route('stripe.callback', $data['order']['uuid']) . "?gtw=stripe&status=failure",
+            'success_url' => $this->getCallbackUrl($data, 'success'),
+            'cancel_url' => $this->getCallbackUrl($data, 'failure'),
             'line_items' => $this->generateStripePrice($data['products']),
             'customer_email' => $data['order']->user->email,
         ];
@@ -65,5 +65,10 @@ trait StripeClient
     private function getBaseApiUrl(): string
     {
         return "https://api.stripe.com/v1";
+    }
+
+    private function getCallbackUrl(array $data, string $status): string
+    {
+        return route('stripe.callback', $data['order']['uuid']) . "?gtw=stripe&status={$status}";
     }
 }
